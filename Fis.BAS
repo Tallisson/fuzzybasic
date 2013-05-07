@@ -1,12 +1,12 @@
 #include "FuzzySet.bas"
 #include "FuzzyRules.bas"
- 
-InitializationFis:
-     ENTRADA = 0
-     SAIDA = 1
-     ID = 1
-     SEPARATOR = ":"
-     print ENTRADA
+
+InitializationFis:     
+     _ENTRADA = 0
+     _SAIDA = 1
+     _ID = 1
+     _SEPARATOR = ":" 
+     
      GoSub InitializationSet
      GoSub InitializationRule      
 Return     
@@ -108,7 +108,7 @@ Return Id
 ' @return Id <int> - Identificador da Variável
 Sub NewInputVar(Nome)
     Nome = toString(Nome) 
-    print 
+
     Tipo = _ENTRADA
     Id = _ID
     _ID += 1

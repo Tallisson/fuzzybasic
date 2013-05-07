@@ -1,5 +1,5 @@
 InitializationSet:
-    ID_SET = 1
+    _ID_SET = 1
 Return
 
 Sub CreateSets(QtdSets)

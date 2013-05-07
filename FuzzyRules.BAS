@@ -1,7 +1,7 @@
 InitializationRule:
-     ID_RULE = 1
-     OP_AND = "AND"
-     OP_OR = "OR"
+     _ID_RULE = 1
+     _OP_AND = "AND"
+     _OP_OR = "OR"
 Return
 
 Sub CreateRules(QtdRules)
@@ -38,7 +38,8 @@ Return
 Sub JoinSingleAnd(Id, Set)
     RecordGet Rules,Id
 
-    if vType(Antecedente) <> 0
+    condition = (vType(Antecedente) <> 0 AND vType(Antecedente) <> 48)     
+    if condition
          Antecedente += " "+toString(Set)+" "+_OP_AND
     else
         Antecedente = toString(Set)         
@@ -50,7 +51,8 @@ Return
 Sub JoinSingleOr(Id, Set)
     RecordGet Rules,Id
     
-    if vType(Antecedente) <> 0
+    condition = (vType(Antecedente) <> 0 AND vType(Antecedente) <> 48)         
+    if condition
         Antecedente += " "+toString(Set)+" "+_OP_OR
     else
         Antecedente = toString(Set)
@@ -62,15 +64,15 @@ Return
 Sub BuildRule(Operator, flag)
     out = ""
 
-    size = maxDim(SetsConsequent,1) 
+    size = maxDim(AntecedentSets,1) 
     for i=0 to size-1
          if (i+1)==2 then flag = True
-         out += toString(SetsConsequent[i])+" "
+         out += toString(AntecedentSets[i])+" "
          if flag AND (size > 1)
             out += (Operator+" ")
          endif
     next
-    Dim SetsConsequent[0]
+    Dim AntecedentSets[0]
 Return out
 
 Sub AddMultiplesAnd(Id)
@@ -83,8 +85,9 @@ Return
 Sub JoinMultiplesAnd(Id)
     RecordGet Rules,Id
     
-    call BuildRule(_OP_AND, (vType(Antecedente) <> 0))    
-    if vType(Antecedente) <> 0
+    condition = (vType(Antecedente) <> 0 AND vType(Antecedente) <> 48)         
+    call BuildRule(_OP_AND, condition)    
+    if condition
        Antecedente += BuildRule__Result
     else
        Antecedente = BuildRule__Result          
@@ -103,8 +106,9 @@ Return
 Sub JoinMultiplesOr(Id)
     RecordGet Rules,Id
     
-    call BuildRule(_OP_OR, (vType(Antecedente) <> 0))    
-    if vType(Antecedente) <> 0
+    condition = (vType(Antecedente) <> 0 AND vType(Antecedente) <> 48)     
+    call BuildRule(_OP_OR, condition)    
+    if condition
        Antecedente += BuildRule__Result          
     else
        Antecedente = BuildRule__Result

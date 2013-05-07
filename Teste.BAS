@@ -10,7 +10,6 @@ Sub Teste()
 
      ' Criando variaveis linguisticas
      call NewInputVar("Temperatura")
-     print "Oi"
      temperatura = NewInputVar__Result      
      
      call NewInputVar("Umidade")
@@ -88,7 +87,7 @@ Sub Teste()
      call AddConsequent(r1, pressaoAlta)
      call JoinSingleAnd(r1, volAlto)
      call GetRule(r1, Antecedente, Consequente, Ativacao) 
-     print "Rule";r1;Antecedente
+     print "Rule";r1;Antecedente;Consequente
      
      call AddWithAnd(r1, tempAlta, umidAlta)
      call AddConsequent(r1, pressaoAlta)
@@ -106,29 +105,29 @@ Sub Teste()
      call GetRule(r3, Antecedente, Consequente, Ativacao3) 
      print "Rule";r3;Antecedente;Consequente
     
-     data SetsConsequent;tempAlta,umidAlta,volAlto     
+     data AntecedentSets;tempAlta,umidAlta,volAlto     
      call AddMultiplesAnd(r2)
      call GetRule(r2, Antecedente, Consequente, Ativacao4) 
      print "Rule";r2;Antecedente;Consequente
      
-     data SetsConsequent;tempBaixa,umidBaixa,volBaixo
+     data AntecedentSets;tempBaixa,umidBaixa,volBaixo
      call AddMultiplesAnd(r3)
      call GetRule(r3, Antecedente, Consequente, Ativacao5) 
      print "Rule";r3;Antecedente;Consequente
      
-     data SetsConsequent;tempMedia,umidMedia,volMedio
+     data AntecedentSets;tempMedia,umidMedia,volMedio
      call AddMultiplesOr(r1)
      call AddConsequent(r1, pressaoMedia)
      call GetRule(r1, Antecedente, Consequente, Ativacao6) 
      print "Rule";r1;Antecedente;Consequente
      
-     data SetsConsequent;tempBaixa,umidBaixa,volBaixo
+     data AntecedentSets;tempBaixa,umidBaixa,volBaixo
      call JoinMultiplesAnd(r1)
      call AddConsequent(r1, pressaoBaixa)
      call GetRule(r1, Antecedente, Consequente, Ativacao7) 
      print "Rule";r1;Antecedente;Consequente
      
-     data SetsConsequent;tempMedia,umidMedia,volMedio
+     data AntecedentSets;tempMedia,umidMedia,volMedio
      call JoinMultiplesOr(r2)
      call AddConsequent(r2, pressaoBaixa)
      call GetRule(r2, Antecedente, Consequente, Ativacao8) 
