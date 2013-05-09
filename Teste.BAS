@@ -58,20 +58,20 @@ Sub Teste()
      call InsertFuzzySet("Alta", pressao, 25, 30, 35, 40)
      pressaoAlta = InsertFuzzySet__Result       
       
-     for i = 1 to 4
-         call GetFuzzyVar(i, Nome, Tipo, Inicio, Fim)     
-         print i;Nome;Inicio;Fim
-     next
+     'for i = 1 to 4
+     '    call GetFuzzyVar(i, Nome, Tipo, Inicio, Fim)     
+     '    print i;Nome;Inicio;Fim
+     'next
      
-     for i = 1 to 12
-         call GetFuzzySet(i, Nome, Variavel, Coord, Proximo)
-         print i;Nome;Variavel;Coord;
-         if vType(Proximo) <> 0
-            print "/"+Proximo
-         else 
-              print crlf()
-         endif
-     next
+     'for i = 1 to 12
+     '    call GetFuzzySet(i, Nome, Variavel, Coord, Proximo)
+     '    print i;Nome;Variavel;Coord;
+     '    if vType(Proximo) <> 0
+     '       print "/"+Proximo
+     '    else 
+     '         print crlf()
+     '    endif
+     'next
      
      ' Criando Regras Fuzzy
      call NewRule()
@@ -87,50 +87,54 @@ Sub Teste()
      call AddConsequent(r1, pressaoAlta)
      call JoinSingleAnd(r1, volAlto)
      call GetRule(r1, Antecedente, Consequente, Ativacao) 
-     print "Rule";r1;Antecedente;Consequente
+     'print "Rule";r1;Antecedente;Consequente
      
      call AddWithAnd(r1, tempAlta, umidAlta)
      call AddConsequent(r1, pressaoAlta)
      call JoinSingleOr(r1, volAlto)
      call GetRule(r1, Antecedente, Consequente, Ativacao1)       
-     print "Rule";r1;Antecedente;Consequente
+     'print "Rule";r1;Antecedente;Consequente
      
      call AddWithOr(r2, tempAlta, umidAlta)
      call AddConsequent(r2, pressaoAlta) 
      call GetRule(r2, Antecedente, Consequente, Ativacao2) 
-     print "Rule";r2;Antecedente;Consequente
+     'print "Rule";r2;Antecedente;Consequente
      
      call AddWithAnd(r3, tempBaixa, umidBaixa)
      call AddConsequent(r3, pressaoBaixa)
      call GetRule(r3, Antecedente, Consequente, Ativacao3) 
-     print "Rule";r3;Antecedente;Consequente
+     'print "Rule";r3;Antecedente;Consequente
     
      data AntecedentSets;tempAlta,umidAlta,volAlto     
      call AddMultiplesAnd(r2)
      call GetRule(r2, Antecedente, Consequente, Ativacao4) 
-     print "Rule";r2;Antecedente;Consequente
+     'print "Rule";r2;Antecedente;Consequente
      
      data AntecedentSets;tempBaixa,umidBaixa,volBaixo
      call AddMultiplesAnd(r3)
      call GetRule(r3, Antecedente, Consequente, Ativacao5) 
-     print "Rule";r3;Antecedente;Consequente
+     'print "Rule";r3;Antecedente;Consequente
      
      data AntecedentSets;tempMedia,umidMedia,volMedio
      call AddMultiplesOr(r1)
      call AddConsequent(r1, pressaoMedia)
      call GetRule(r1, Antecedente, Consequente, Ativacao6) 
-     print "Rule";r1;Antecedente;Consequente
+     'print "Rule";r1;Antecedente;Consequente
      
      data AntecedentSets;tempBaixa,umidBaixa,volBaixo
      call JoinMultiplesAnd(r1)
      call AddConsequent(r1, pressaoBaixa)
      call GetRule(r1, Antecedente, Consequente, Ativacao7) 
-     print "Rule";r1;Antecedente;Consequente
+     'print "Rule";r1;Antecedente;Consequente
      
      data AntecedentSets;tempMedia,umidMedia,volMedio
      call JoinMultiplesOr(r2)
      call AddConsequent(r2, pressaoBaixa)
      call GetRule(r2, Antecedente, Consequente, Ativacao8) 
-     print "Rule";r2;Antecedente;Consequente      
+     'print "Rule";r2;Antecedente;Consequente
+
+     data FuzzyInputs;temperatura,27,umidade,27.5,volume,16
+     call EvaluateFis()       
+     
 Return
 

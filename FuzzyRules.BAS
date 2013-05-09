@@ -123,7 +123,7 @@ Sub AddConsequent(Id, Set)
     RecordPut Rules,Id
 Return
 
-Sub GetAntecent(Id, &Antecedent)
+Sub GetAntecedent(Id, &Antecedente)
     RecordGet Rules,Id
 Return
 
@@ -137,4 +137,36 @@ Return
 
 Sub GetRule(Id, &Antecedente, &Consequente, &GrauAtivacao) 
     RecordGet Rules,Id
+Return
+
+Sub IsFired()
+    call GetMembership(Stack[0], Fire)
+    Op = .0
+    for i = 1 to maxDim(Stack)-1
+        if isNumber(Stack[i])
+           call GetMembership(Stack[i], Op)
+        elseif Stack[i] == _OP_AND 
+           Fire = 1.0*MinV(Op, Fire)   
+        elseif Stack[i] == _OP_OR
+           Fire = 1.0*MaxV(Op, Fire)
+        endif
+    next      
+Return Fire
+
+Sub EvaluateRules()
+    for i = 1 to (_ID_RULE-1)
+        call GetAntecedent(i, Antecedent)
+
+        mFromString Stack,Antecedent," "         
+        call IsFired()
+        Fire = IsFired__Result         
+        
+        call SetFired(i, Fire)
+    next
+Return
+
+Sub SetFired(Id, Fired)
+    RecordGet Rules,Id
+    GrauAtivacao = Fired
+    RecordPut Rules,Id
 Return

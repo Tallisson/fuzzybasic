@@ -128,3 +128,32 @@ Sub NewOutputVar(Nome)
     
     RecordPut Fis,Id                                                               
 Return Id 
+
+Sub Fuzzify(Var, Value)
+    call GetInitialSet(Var, InitialSet)
+    i=InitialSet
+    while True
+        call CalcFuzzyValue(i, Value)
+        FuzzyValue = CalcFuzzyValue__Result
+        call SetMembership(i, FuzzyValue)
+        
+        call GetNext(i, NextSet)         
+        if(vType(NextSet) <> 0 AND vType(NextSet) <> 48)
+              i = NextSet
+        else
+            break
+        endif         
+    wend
+Return
+
+Sub EvaluateFis()
+    i = 0
+    while i < maxDim(FuzzyInputs)-1
+        call Fuzzify(FuzzyInputs[i], FuzzyInputs[i+1])
+        i += 2
+    wend
+
+    call EvaluateRules()
+    
+    dim FuzzyInputs[0]
+Return
