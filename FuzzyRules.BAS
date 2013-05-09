@@ -131,7 +131,7 @@ Sub GetConsequent(Id, &Consequente)
     RecordGet Rules,Id
 Return                 
 
-Sub GetAtivacao(Id, &GrauAtivacao)
+Sub GetFire(Id, &GrauAtivacao)
     RecordGet Rules,Id
 Return
 

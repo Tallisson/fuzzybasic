@@ -6,6 +6,7 @@ InitializationFis:
      _SAIDA = 1
      _ID = 1
      _SEPARATOR = ":" 
+     _NUM_DISCRET = 100
      
      GoSub InitializationSet
      GoSub InitializationRule      
@@ -18,12 +19,14 @@ Return
 ' @param QtdSets <int> - Número de Conjuntos Fuzzy
 ' @param QtdSets <int> - Número de Regras Fuzzy         
 Sub CreateFis(QtdVars, QtdSets, QtdRules)
-    Dim Fis[QtdVars+1, 4]
+    Dim Fis[QtdVars+1, 6]
     
     Fis[0,0] = "Nome"
     Fis[0,1] = "Tipo"
     Fis[0,2] = "ConjuntoInicial"
     Fis[0,3] = "ConjuntoFinal"   
+    Fis[0,4] = "LimInf"
+    Fis[0,5] = "LimSup"
     
     call CreateSets(QtdSets+1)
     call CreateRules(QtdRules+1)
@@ -45,6 +48,14 @@ Sub GetFinalSet(Id, &ConjuntoFinal)
     RecordGet Fis,Id 
 Return
 
+Sub GetInfLimit(Id, &LimInf)
+    RecordGet Fis,Id
+Return
+
+Sub GetSupLimit(Id, &LimSup)
+    RecordGet Fis,Id
+Return
+
 Sub UpdateInitialSet(Id, Set)    
     RecordGet Fis,Id
     ConjuntoInicial = Set
@@ -64,22 +75,40 @@ Return
 ' @param Tipo out <int> - Variavel que referencia o Tipo da variável
 ' @param ConjuntoInicial out <int> - Variavel que referencia o apontador para C. Inicial
 ' @param ConjuntoInicial out <int> - Variavel que referencia o apontador para C. Final
-Sub GetFuzzyVar(Id, &Nome, &Tipo, &ConjuntoInicial, &ConjuntoFinal)
+Sub GetFuzzyVar(Id, &Nome, &Tipo, &ConjuntoInicial, &ConjuntoFinal, &LimInf, &LimSup)
     RecordGet Fis,Id
 Return
 
-Sub UpdateSets(Id, Set)
-    call GetFinalSet(Id, FinalSet)
-    
-    if !vType(FinalSet)
-         call UpdateInitialSet(Id, Set)
-    endif
-    call UpdateFinalSet(Id, Set)
-    
+Sub UpdateLimits(Id, Initial, Final)
     RecordGet Fis,Id
+
+    if (vType(LimInf) == 0 OR vType(LimInf) == 48)
+       LimInf = Initial
+    elseif LimInf > Initial
+       LimInf = Initial
+    endif
+    
+    if (vType(LimSup) == 0 OR vType(LimSup) == 48) 
+       LimSup = Final
+    elseif LimSup < Final
+       LimSup = Final 
+    endif
+    
     RecordPut Fis,Id
 Return
 
+Sub UpdateSets(Id, Set)
+    RecordGet Fis,Id
+    
+    call GetFinalSet(Id, FinalSet)     
+    if (vType(FinalSet) == 0 OR vType(FinalSet) == 48)
+         ConjuntoInicial = Set
+    endif
+    ConjuntoFinal = Set
+    
+    RecordPut Fis,Id
+Return
+ 
 ' @brief Rotina para criacao de um Conjunto Fuzzy, associado a uma Variavel Fuzzy
 ' 
 ' @param Nome <string> - Rótulo do Conjunto
@@ -100,6 +129,7 @@ Sub InsertFuzzySet(Nome, Variavel, P1, P2, P3, P4)
     endif
 
     call UpdateSets(Variavel, Id)          
+    call UpdateLimits(Variavel, P1, P4)
 Return Id
 
 ' @brief Rotina para criação de variável de entrada Fuzzy
