@@ -118,7 +118,7 @@ Sub JoinMultiplesOr(Id)
 Return
 
 Sub AddConsequent(Id, Set)
-    RecordGet Rules,Id
+    RecordGet Rules,Id          
     Consequente = Set
     RecordPut Rules,Id
 Return
@@ -156,12 +156,19 @@ Return Fire
 Sub EvaluateRules()
     for i = 1 to (_ID_RULE-1)
         call GetAntecedent(i, Antecedent)
-
+        
         mFromString Stack,Antecedent," "         
         call IsFired()
         Fire = IsFired__Result         
-        
-        call SetFired(i, Fire)
+        call SetFired(i, Fire)          
+ 
+        call GetConsequent(i, Consequent)
+        call GetMembership(Consequent, Membership)
+        if(vType(Membership) == 0 OR vType(Membership) == 48)                
+             call SetMembership(Consequent, Fire)
+        elseif(Fire > Membership)
+             call SetMembership(Consequent, Fire)
+        endif
     next
 Return
 
@@ -169,4 +176,16 @@ Sub SetFired(Id, Fired)
     RecordGet Rules,Id
     GrauAtivacao = Fired
     RecordPut Rules,Id
+Return
+
+Sub SetNextRule(Id, Rule)
+    RecordGet Rules,Id
+    Proxima = Rule
+    RecordPut Rules,Id
+Return
+
+Sub CleanFireRules()
+    for i = 1 to (_ID_RULE-1)
+        call SetFired(i, .0)
+    next
 Return

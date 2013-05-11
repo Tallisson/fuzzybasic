@@ -1,25 +1,29 @@
 #include "FuzzySet.bas"
 #include "FuzzyRules.bas"
+#include "FuzzyIO.bas"
 
 InitializationFis:     
      _ENTRADA = 0
      _SAIDA = 1
      _ID = 1
      _SEPARATOR = ":" 
-     _NUM_DISCRET = 100
+     _NUM_DISCRET = 500
      
      GoSub InitializationSet
      GoSub InitializationRule      
+     GoSub InitializationIO
 Return     
                
 ' @brief Rotina para criação do Sistema de Inferência Fuzzy, 
 ' inicializa estrutura para manter as variáveis e os conjuntos fuzzy.
 '
-' @param QtdVars <int> - Número de Variaveis Fuzzy
+' @param QtdInVars <int> - Número de Variaveis de Entrada Fuzzy
+' @param QtdOutVars <int> - Número de Variaveis de Saída Fuzzy
 ' @param QtdSets <int> - Número de Conjuntos Fuzzy
-' @param QtdSets <int> - Número de Regras Fuzzy         
-Sub CreateFis(QtdVars, QtdSets, QtdRules)
-    Dim Fis[QtdVars+1, 6]
+' @param QtdRules <int> - Número de Regras Fuzzy         
+Sub CreateFis(QtdInVars, QtdOutVars, QtdSets, QtdRules)
+    QtdVars = QtdInVars + QtdOutVars + 1
+    Dim Fis[QtdVars, 6]
     
     Fis[0,0] = "Nome"
     Fis[0,1] = "Tipo"
@@ -30,6 +34,7 @@ Sub CreateFis(QtdVars, QtdSets, QtdRules)
     
     call CreateSets(QtdSets+1)
     call CreateRules(QtdRules+1)
+    call CreateIO(QtdOutVars+1)
 Return
 
 Sub GetName(Id, &Nome)
@@ -100,8 +105,8 @@ Return
 Sub UpdateSets(Id, Set)
     RecordGet Fis,Id
     
-    call GetFinalSet(Id, FinalSet)     
-    if (vType(FinalSet) == 0 OR vType(FinalSet) == 48)
+    'call GetFinalSet(Id, FinalSet)     
+    if (vType(ConjuntoFinal) == 0 OR vType(ConjuntoFinal) == 48)
          ConjuntoInicial = Set
     endif
     ConjuntoFinal = Set
@@ -156,7 +161,8 @@ Sub NewOutputVar(Nome)
     Id = _ID
     _ID += 1
     
-    RecordPut Fis,Id                                                               
+    RecordPut Fis,Id
+    call NewIO(Id)                                                               
 Return Id 
 
 Sub Fuzzify(Var, Value)
@@ -176,6 +182,94 @@ Sub Fuzzify(Var, Value)
     wend
 Return
 
+Sub CalculateValue(Var, CrispValue)
+    call GetInitialSet(Var, InitialSet)
+    i=InitialSet
+    FuzzyValue = .0     
+    while True
+        call GetMembership(i, Membership)
+        if(vType(Membership) <> 0 AND vType(Membership) <> 48)
+            if(Membership > 0)
+                call CalcFuzzyValue(i, CrispValue)
+                Value = CalcFuzzyValue__Result   
+                if(Value > Membership) then Value = Membership
+                FuzzyValue = MaxV(FuzzyValue, Value)
+            endif
+        endif
+        
+        call GetNext(i, NextSet)         
+        if(vType(NextSet) <> 0 AND vType(NextSet) <> 48)
+              i = NextSet
+        else
+            break
+        endif         
+    wend     
+Return FuzzyValue
+
+Sub CalculateFactor(Var)
+    Factor = .0
+    call GetInfLimit(Var, LimInf)
+    call GetSupLimit(Var, LimSup)
+
+    Factor = 1.0*(LimSup-LimInf)/(_NUM_DISCRET-1)
+Return Factor
+
+Sub Defuzzify() 
+    for i = 1 to (_ID_OUTPUT-1)
+        Set = ""
+        Num = 0
+        Den = 0            
+        Condition = True
+
+        call GetVariable(i, Var)
+        call GetInfLimit(Var, InfLimit)
+        ActualPoint = InfLimit
+        MaxPoint = InfLimit
+        call CalculateFactor(Var)
+        Factor = CalculateFactor__Result 
+        while True
+            if(isString(Set) OR ActualPoint > MaxPoint OR Condition)
+                Condition = False
+                if(isString(Set))
+                    call GetInitialSet(Var, Set)
+                else
+                    call GetNext(Set, NextSet)
+                    if(vType(NextSet) <> 0 AND vType(NextSet) <> 48)
+                        Set = NextSet
+                    else
+                        break
+                    endif
+                endif
+
+                call GetP4(Set, MaxPoint)                      
+                call GetMembership(Set, Membership)                                  
+                if(vType(Membership) == 0 OR vType(Membership) == 48)
+                    Condition = True
+                    continue
+                elseif(Membership == 0)
+                    Condition = True
+                    continue
+                endif
+
+                call GetP1(Set, MinPoint)
+                if(ActualPoint < MinPoint)
+                    N = RoundUp((MinPoint-InfLimit)/Factor)
+                    ActualPoint = 1.0*InfLimit+Factor*N
+                endif
+            else
+                ActualPoint += Factor            
+            endif
+            if(ActualPoint < MaxPoint)
+                call CalculateValue(Var, ActualPoint)
+                FuzzyValue = CalculateValue__Result
+                Num += ActualPoint*FuzzyValue
+                Den += FuzzyValue
+            endif
+        wend
+        call SetOutput(i, (Num/Den))
+    next
+Return
+
 Sub EvaluateFis()
     i = 0
     while i < maxDim(FuzzyInputs)-1
@@ -184,6 +278,8 @@ Sub EvaluateFis()
     wend
 
     call EvaluateRules()
-    
+    call Defuzzify()
+    call CleanMembershipSets()
+    call CleanFireRules()
     dim FuzzyInputs[0]
 Return

@@ -62,6 +62,16 @@ Sub GetFuzzySet(Id, &Nome, &Variavel, &Coord, &Proximo)
     RecordGet Set,Id     
 Return
 
+Sub GetP1(Id, &P1)
+    call GetCoords(Id, Coords)
+    P1 = 1.0*toNumber(Extract(Coords, _SEPARATOR, 1))
+Return
+
+Sub GetP4(Id, &P4)
+    call GetCoords(Id, Coords)
+    P4 = 1.0*toNumber(Extract(Coords, _SEPARATOR, 4))
+Return
+
 Sub CalcFuzzyValue(Set, CrispValue)
     call GetCoords(Set, Coords)    
     mFromString aux,Coords,_SEPARATOR
@@ -80,4 +90,10 @@ Sub SetMembership(Id, Membership)
     RecordGet Set,Id
     Pertinencia = Membership
     RecordPut Set,Id
+Return
+
+Sub CleanMembershipSets()
+    for i = 1 to (_ID_SET-1)
+        call SetMembership(i, .0)
+    next
 Return

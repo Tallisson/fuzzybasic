@@ -6,7 +6,7 @@ End
 
 Sub Teste()
      GoSub InitializationFis      
-     call CreateFis(4, 16, 12)
+     call CreateFis(3, 2, 16, 12)
 
      ' Criando variaveis linguisticas
      call NewInputVar("Temperatura")
@@ -59,8 +59,8 @@ Sub Teste()
      pressaoAlta = InsertFuzzySet__Result       
       
      'for i = 1 to 4
-     '    call GetFuzzyVar(i, Nome, Tipo, Inicio, Fim)     
-     '    print i;Nome;Inicio;Fim
+     '    call GetFuzzyVar(i, Nome, Tipo, Inicio, Fim, L1, L2)     
+     '   print i;Nome;Inicio;Fim;L1;L2
      'next
      
      'for i = 1 to 12
@@ -129,12 +129,16 @@ Sub Teste()
      
      data AntecedentSets;tempMedia,umidMedia,volMedio
      call JoinMultiplesOr(r2)
-     call AddConsequent(r2, pressaoBaixa)
+     call AddConsequent(r2, pressaoMedia)
      call GetRule(r2, Antecedente, Consequente, Ativacao8) 
      'print "Rule";r2;Antecedente;Consequente
 
-     data FuzzyInputs;temperatura,27,umidade,27.5,volume,16
-     call EvaluateFis()       
+     call GetOutputVar(1)
      
+     data FuzzyInputs;temperatura,27,umidade,27.5,volume,16
+     call EvaluateFis()
+     
+     call GetOutput(pressao, saida)
+     print saida
 Return
 
