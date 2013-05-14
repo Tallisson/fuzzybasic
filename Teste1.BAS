@@ -8,43 +8,43 @@ Sub Teste()
     call CreateFis(2, 1, 9, 12)  
     
     ' Criando variaveis linguisticas
-    call NewInputVar("Temperatura")
+    call NewInputVar()
     temperatura = NewInputVar__Result
     
-    call NewInputVar("Pressao")  
+    call NewInputVar()  
     pressao = NewInputVar__Result
     
-    call NewOutputVar("Volume")
+    call NewOutputVar()
     volume = NewOutputVar__Result
     
     ' Criando conjuntos para variavel Temperatura
-    call InsertFuzzySet("Baixa", temperatura, 100, 100, 200, 300)
+    call InsertFuzzySet(temperatura, 100, 100, 200, 300)
     TempBaixa = InsertFuzzySet__Result
     
-    call InsertFuzzySet("Media", temperatura, 200, 300, 300, 400)
+    call InsertFuzzySet(temperatura, 200, 300, 300, 400)
     TempMedia = InsertFuzzySet__Result
     
-    call InsertFuzzySet("Alta", temperatura, 300, 400, 500, 500)
+    call InsertFuzzySet(temperatura, 300, 400, 500, 500)
     TempAlta = InsertFuzzySet__Result
     
     ' Criando conjuntos para variavel Umidade
-    call InsertFuzzySet("Pequena", pressao, 2, 2, 3, 6)
+    call InsertFuzzySet(pressao, 2, 2, 3, 6)
     PressaoPequena = InsertFuzzySet__Result
     
-    call InsertFuzzySet("Media", pressao, 3, 6, 6, 9)
+    call InsertFuzzySet(pressao, 3, 6, 6, 9)
     PressaoMedia = InsertFuzzySet__Result
     
-    call InsertFuzzySet("Alta", pressao, 6, 9, 10, 10)
+    call InsertFuzzySet(pressao, 6, 9, 10, 10)
     PressaoAlta = InsertFuzzySet__Result
     
     ' Criando conjuntos para variavel Volume
-    call InsertFuzzySet("Baixo",volume, 4, 4, 6, 8)
+    call InsertFuzzySet(volume, 4, 4, 6, 8)
     VolBaixo = InsertFuzzySet__Result
     
-    call InsertFuzzySet("Medio", volume, 6, 8, 8, 10) 
+    call InsertFuzzySet(volume, 6, 8, 8, 10) 
     VolMedio = InsertFuzzySet__Result
     
-    call InsertFuzzySet("Alto", volume, 8, 10, 12, 12)
+    call InsertFuzzySet(volume, 8, 10, 12, 12)
     VolAlto = InsertFuzzySet__Result
     
     ' Criando Regras Se Entao
