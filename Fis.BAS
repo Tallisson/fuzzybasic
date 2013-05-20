@@ -22,6 +22,7 @@ Return
 ' @param QtdSets <int> - Número de Conjuntos Fuzzy
 ' @param QtdRules <int> - Número de Regras Fuzzy         
 Sub CreateFis(QtdInVars, QtdOutVars, QtdSets, QtdRules)
+    GoSub InitializationFis      
     QtdVars = QtdInVars + QtdOutVars + 1
     Dim Fis[QtdVars, 5]
     
